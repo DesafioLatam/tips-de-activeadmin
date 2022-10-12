@@ -1,6 +1,16 @@
 # Tips de ActiveAdmin
 
+Esta es una colección de tips para trabajar con [ActiveAdmin](https://activeadmin.info) en Ruby on Rails 
+recogidos por el equipo de TI de [Desafío Latam](https://www.desafiolatam.com). 
+
+## ¿Qué es Active Admin?
+ActiveAdmin es un framework sobre Ruby on Rails que permite crear paneles de control de forma sencilla.
+![](https://activeadmin.info/images/features.png)
+
+## Crear un recurso
+
 ## Nombre y menú
+Dentro del recurso del admin
 1. Cambiar el nombre de un recurso
 
 ```
