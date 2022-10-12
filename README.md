@@ -25,51 +25,52 @@ end
 Dentro del recurso del admin
 1. Cambiar el nombre de un recurso
 
-```
+```ruby
 menu label: "Nombre"
 ```
 
 2. Agregar un recurso a un Submenú
 
-```
+```ruby
 menu parent: :recurse_padre
 ```
 
 3. Cambiar orden en el menú 
-  - Los items se ordenan de mayor prioridad a menor.
-  - Aplica también a los elementos del submenú.
+  - Los items se ordenan de menor prioridad a mayor.
+  - De la misma forma se pueden ordenar los elementos del submenú.
 
-```
+```ruby
 menu priority: valor
 ```
 
 4. Todo junto
-```
+
+```ruby
 menu :label => "Nombre", parent: :recurso_padre, priority: 40
 ```
 
 ## Scopes
-
-Los scopes construyen automáticamente un filtro sobre un scope que ya existe en el modelo
+Los scopes construyen automáticamente un filtro sobre un scope que ya existe en el modelo.
 
 1. Agrupar scopes
-```
+
+```ruby
 scope :nombre, group: :grupo
 ```
 
 2. Cambiar el nombre de un scope
-  Se puede cambiar el nombre de un scope utilizando un bloque
-```
+Se puede cambiar el nombre de un scope utilizando un bloque
+
+```ruby
 scope "Abierto", group: :admission_status do |recurso|
   recurso.un_scope_del_modelo
 end
 ```
 
 ## Scoped collections
+Se puede modificar la consulta utilizada por activeadmin, esto es útil para corregir problemas de N + 1 query
 
-Se puede modificar la consulta utilizada por activeadmin, esto es útil para corregir problemas de n+1 query
-
-```
+```ruby
 controller do
   def scoped_collection
     end_of_association_chain.includes(:recurso_relacionado)
@@ -77,10 +78,10 @@ controller do
 end
 ```
 
-## Guardar el current_user
+## Guardar el `current_user`
 Se puede sobreescribir el método create de inherited resources
 
-```
+```ruby
 controller do
   def create
     @enrollment = Enrollment.new(permitted_params[:enrollment])
@@ -91,7 +92,8 @@ end
 ```
 
 ## Redirigir a una página distinta al crear o actualizar
-```
+
+```ruby
 controller do
   def create
     # Redirecciona al index del admind de program types
@@ -108,13 +110,14 @@ end
 ## Filtros
 Se puede remover un filtro específico de la barra lateral
 
-```
+```ruby
 remove_filter :filtro
 ```
 
 ## Index
 Se puede agregar contenido html como links a una columna.
-```
+
+```ruby
 index do
   selectable_column
   column :id
@@ -125,7 +128,8 @@ index do
 
 ## Formularios
 1. Se puede agregar automáticamente un datepicker a un campo de fecha
-```
+
+```ruby
 form do |f|
   f.inputs do
     f.input :name
@@ -136,7 +140,8 @@ end
 ```
 
 2. Se pueden customizar los selects
-```
+
+```ruby
 form do |f|
   f.inputs do
     f.input :name
@@ -148,7 +153,8 @@ end
 ```
 
 3. Se puede mostrar un input solo si el formulario es para agregar un objeto (o solo para editar)
-```
+
+```ruby
 form do |f|
   if f.object.new_record? 
     f.input :name
@@ -158,7 +164,7 @@ end
 
 ## Autenticar endpoints dentro de un controller que no sea Admin
 
-```  
+```ruby  
 authenticate :admin_user, ->(admin_user) { !admin_user.nil? } do
   mount Blazer::Engine, at: "blazer"
   resources :enrollments
@@ -168,16 +174,14 @@ end
 
 ## Dar acceso a una página genérica utilizando cancancan
 
+```ruby
+if user.rol == "rol_con_acceso"
+  can :read, 
+    ActiveAdmin::Page, 
+    name: "Dashboard", # Dar acceso al dashboard
+    namespace_name: "admin"
+  can :read, 
+    ActiveAdmin::Page, 
+    name: "OtraPaginaRegistrada", # Dar acceso a otra página
+    namespace_name: "admin"
 ```
-
- if user.rol == "rol_con_acceso"
-      can :read, 
-        ActiveAdmin::Page, 
-        name: "Dashboard", # Dar acceso al dashboard
-        namespace_name: "admin"
-      can :read, 
-        ActiveAdmin::Page, 
-        name: "OtraPaginaRegistrada", # Dar acceso a otra página
-        namespace_name: "admin"
-```
-
