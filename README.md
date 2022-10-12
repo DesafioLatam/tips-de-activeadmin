@@ -1,13 +1,25 @@
 # Tips de ActiveAdmin
-
-Esta es una colección de tips para trabajar con [ActiveAdmin](https://activeadmin.info) en Ruby on Rails 
+> Esta es una colección de tips para trabajar con [ActiveAdmin](https://activeadmin.info) en Ruby on Rails 
 recogidos por el equipo de TI de [Desafío Latam](https://www.desafiolatam.com). 
 
 ## ¿Qué es Active Admin?
-ActiveAdmin es un framework sobre Ruby on Rails que permite crear paneles de control de forma sencilla.
+> ActiveAdmin es un framework sobre Ruby on Rails que permite crear paneles de control de forma sencilla.
+
 ![](https://activeadmin.info/images/features.png)
 
-## Crear un recurso
+## Crear un recurso nuevo
+rails generate active_admin:resource nombre_del_modelo
+
+## Crear una página nueva
+1. Crear un archivo dentro de admin, ejemplo: enrollment_stats.rb
+2. Registrar la página 
+```ruby
+ActiveAdmin.register_page 'EnrollmentStats' do
+  content title: "título" do
+    # Aquí puedes agregar componentes Arbre y/o renderear una vista parcial
+  end
+end
+```
 
 ## Nombre y menú
 Dentro del recurso del admin
@@ -144,8 +156,6 @@ form do |f|
 end
 ```
 
-
-
 ## Autenticar endpoints dentro de un controller que no sea Admin
 
 ```  
@@ -156,5 +166,18 @@ authenticate :admin_user, ->(admin_user) { !admin_user.nil? } do
 end
 ```
 
+## Dar acceso a una página genérica utilizando cancancan
 
+```
+
+ if user.rol == "rol_con_acceso"
+      can :read, 
+        ActiveAdmin::Page, 
+        name: "Dashboard", # Dar acceso al dashboard
+        namespace_name: "admin"
+      can :read, 
+        ActiveAdmin::Page, 
+        name: "OtraPaginaRegistrada", # Dar acceso a otra página
+        namespace_name: "admin"
+```
 
