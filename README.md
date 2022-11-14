@@ -1,6 +1,29 @@
 # Tips de ActiveAdmin
+> Esta es una colección de tips para trabajar con [ActiveAdmin](https://activeadmin.info) en Ruby on Rails 
+recogidos por el equipo de TI de [Desafío Latam](https://www.desafiolatam.com). 
+
+## ¿Qué es Active Admin?
+> ActiveAdmin es un framework sobre Ruby on Rails que permite crear paneles de control de forma sencilla.
+
+![](https://activeadmin.info/images/features.png)
+
+## Crear un recurso nuevo
+rails generate active_admin:resource nombre_del_modelo
+
+## Crear una página nueva
+1. Crear un archivo dentro de admin, ejemplo: enrollment_stats.rb
+2. Registrar la página 
+```ruby
+ActiveAdmin.register_page 'EnrollmentStats' do
+  content title: "título" do
+    # Aquí puedes agregar componentes Arbre y/o renderear una vista parcial
+  end
+end
+```
 
 ## Nombre y menú
+Dentro del admin del recurso:
+
 - Cambiar el nombre de un recurso:
   ```ruby
   menu label: "Nombre"
@@ -11,20 +34,20 @@
   menu parent: :recurse_padre
   ```
 
-- Cambiar orden en el menú: 
-  - Los items se ordenan de mayor prioridad a menor.
-  - Aplica también a los elementos del submenú.
+- Cambiar orden en el menú 
+  - Los items se ordenan de menor prioridad a mayor. 
+  - De la misma forma se pueden ordenar los elementos del submenú.
+
   ```ruby
-  menu priority: valor
+  menu priority: 10
   ```
 
-- Cambiar todo a la vez
+- Todo junto
   ```ruby
   menu :label => "Nombre", parent: :recurso_padre, priority: 40
   ```
 ## Scopes
-
-Los scopes construyen automáticamente un filtro sobre un scope de que ya existe en un modelo
+Los scopes construyen automáticamente un filtro sobre un scope que ya existe en el modelo.
 
 - Agrupar scopes:
   - Los botones agrupados aparecen juntos en la interfaz
@@ -51,6 +74,24 @@ Los scopes construyen automáticamente un filtro sobre un scope de que ya existe
   scope :all
   ```
 
+## Scopes
+Los scopes construyen automáticamente un filtro sobre un scope que ya existe en el modelo.
+
+1. Agrupar scopes
+
+```ruby
+scope :nombre, group: :grupo
+```
+
+2. Cambiar el nombre de un scope
+Se puede cambiar el nombre de un scope utilizando un bloque
+
+```ruby
+scope "Abierto", group: :admission_status do |recurso|
+  recurso.un_scope_del_modelo
+end
+```
+
 ## Scoped collections
 Se puede modificar la consulta utilizada por activeadmin, esto es útil para corregir problemas de N + 1 query
 
@@ -62,7 +103,7 @@ controller do
 end
 ```
 
-## Guardar el current_user
+## Guardar el `current_user`
 Se puede sobreescribir el método create de inherited resources
 
 ```ruby
@@ -112,7 +153,8 @@ end
   ```
 
 ## Index
-Se puede agregar contenido HTML como links a una columna.
+Se puede agregar contenido html como links a una columna.
+
 ```ruby
 index do
   selectable_column
@@ -162,4 +204,17 @@ authenticate :admin_user, ->(admin_user) { !admin_user.nil? } do
   resources :enrollments
   post "enrollments/data-update", "enrollments#data_update"
 end
+```
+
+## Dar acceso a una página genérica utilizando cancancan
+```ruby
+if user.rol == "rol_con_acceso"
+  can :read, 
+    ActiveAdmin::Page, 
+    name: "Dashboard", # Dar acceso al dashboard
+    namespace_name: "admin"
+  can :read, 
+    ActiveAdmin::Page, 
+    name: "OtraPaginaRegistrada", # Dar acceso a otra página
+    namespace_name: "admin"
 ```
