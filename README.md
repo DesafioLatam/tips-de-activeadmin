@@ -153,14 +153,16 @@ end
   ```
 
 ## Index
-Se puede agregar contenido html como links a una columna.
+Se puede agregar contenido HTML como links a una columna.
 
 ```ruby
 index do
   selectable_column
   column :id
   column "Modulos" do |g|
-    raw "<a href='#{admin_generation_modules_path(q: {generation_id_eq: g.id})}'> #{g.generation_modules.length} </a>"
+    raw "<a href='#{admin_generation_modules_path(q: {generation_id_eq: g.id})}'> 
+      #{g.generation_modules.length} 
+    </a>"
   end
 ```
 
@@ -197,6 +199,47 @@ index do
   end
   ```
 
+- Se pueden introducir datos de un modelo relacionado directamente en el formulario. Supongamos que tenemos el modelo de estudiante y el modelo de notas. Un estudiante tiene muchas notas.
+
+  1. Agregamos el input en el admin de estudiante
+  ```ruby
+    form do |f|
+      f.input :name
+      f.has_many :others do |other|
+        other.input :score
+      end
+  end
+  ```
+
+  2. Indicamos en el modelo de estudiante que puede recibir información del objeto relacionado
+  ```ruby
+  accepts_nested_attributes_for :scores, allow_destroy: true
+  ```
+
+  3. Agregamos en el admin de estudiante los strong params
+  ```ruby
+    permit_params :name,
+      :scores_attributes[:score]
+  ```
+
+
+## Crear diversos paneles
+Se pueden dividir el index, show o incluso el dashboard en múltiples columnas
+```ruby
+  show do
+    columns do
+      column do 
+        attributes_table do
+          ...
+        end
+      end
+      column do
+        h3 "Otra información"
+      end
+    end
+  end
+```
+ 
 ## Autenticar endpoints dentro de un controller que no sea Admin
 ```ruby
 authenticate :admin_user, ->(admin_user) { !admin_user.nil? } do
